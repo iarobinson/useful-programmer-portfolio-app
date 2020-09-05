@@ -1,4 +1,4 @@
-var database_uri = 'mongodb+srv://useful-programmer-practice:mongodb007\$@usefulprogrammerpractic.ufmfa.mongodb.net/usefulProgrammerPractice?retryWrites=true&w=majority'
+var database_uri = 'mongodb+srv://useful-programmer-practice:password\$@usefulprogrammerpractic.ufmfa.mongodb.net/dbNAME?retryWrites=true&w=majority'
 
 // server.js
 // where your node app starts
@@ -9,6 +9,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var shortid = require('shortid');
+var dns = require('dns');
 var app = express();
 var port = process.env.PORT || 3000;
 
@@ -106,9 +107,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.post("/api/shorturl/new/", function (req, res) {
-
+app.post("/api/shorturl/new/", (req, res) => {
   let client_requested_url = req.body.url
+
+  dns.lookup(client_requested_url, { all:true, verbatim: true }, (err, address, family) => {
+    console.log('address: %j family: IPv%s', address, family, err);
+    if (err) {
+      return res.json({"error": "invalid URL"});
+    }
+  });
+
   let suffix = shortid.generate();
   let newShortURL = suffix
 
@@ -118,7 +126,7 @@ app.post("/api/shorturl/new/", function (req, res) {
     suffix: suffix
   })
 
-  newURL.save(function(err, doc) {
+  newURL.save((err, doc) => {
     if (err) return console.error(err);
     res.json({
       "saved": true,
@@ -129,11 +137,10 @@ app.post("/api/shorturl/new/", function (req, res) {
   });
 });
 
-app.get("/api/shorturl/:suffix", function(req, res) {
+app.get("/api/shorturl/:suffix", (req, res) => {
   let userGeneratedSuffix = req.params.suffix;
-  ShortURL.find({suffix: userGeneratedSuffix}).then(function(foundUrls) {
+  ShortURL.find({suffix: userGeneratedSuffix}).then(foundUrls => {
     let urlForRedirect = foundUrls[0];
-    console.log(urlForRedirect, " <= urlForRedirect");
     res.redirect(urlForRedirect.original_url);
   });
 });
