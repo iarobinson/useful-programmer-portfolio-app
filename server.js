@@ -1,6 +1,3 @@
-// server.js
-// where your node app starts
-'mongodb007\$'
 // init project
 var express = require('express');
 var mongo = require('mongodb');
@@ -11,7 +8,6 @@ var dns = require('dns');
 var app = express();
 var port = process.env.PORT || 3000;
 
-// mongoose.connect(process.env.DB_URI);
 mongoose.connect(process.env.DB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
