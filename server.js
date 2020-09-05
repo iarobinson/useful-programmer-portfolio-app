@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var shortid = require('shortid');
 var dns = require('dns');
+require('dotenv').config()
+
 var app = express();
 var port = process.env.PORT || 3000;
 
