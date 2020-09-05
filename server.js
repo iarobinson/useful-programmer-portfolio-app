@@ -1,8 +1,6 @@
-var database_uri = 'mongodb+srv://useful-programmer-practice:password\$@usefulprogrammerpractic.ufmfa.mongodb.net/dbNAME?retryWrites=true&w=majority'
-
 // server.js
 // where your node app starts
-
+'mongodb007\$'
 // init project
 var express = require('express');
 var mongo = require('mongodb');
@@ -14,7 +12,7 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 // mongoose.connect(process.env.DB_URI);
-mongoose.connect(database_uri, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -110,12 +108,12 @@ app.use(bodyParser.json())
 app.post("/api/shorturl/new/", (req, res) => {
   let client_requested_url = req.body.url
 
-  dns.lookup(client_requested_url, { all:true, verbatim: true }, (err, address, family) => {
-    console.log('address: %j family: IPv%s', address, family, err);
-    if (err) {
-      return res.json({"error": "invalid URL"});
-    }
-  });
+  // dns.lookup(client_requested_url, { all:true, verbatim: true }, (err, address, family) => {
+  //   console.log('address: %j family: IPv%s', address, family, err);
+  //   if (err) {
+  //     return res.json({"error": "invalid URL"});
+  //   }
+  // });
 
   let suffix = shortid.generate();
   let newShortURL = suffix
