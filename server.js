@@ -163,9 +163,7 @@ app.post("/api/exercise/new-user/", (req, res) => {
 
 app.get("/api/exercise/users", (req, res) => {
   ExerciseUser.find({}, (err, exerciseUsers) => {
-    res.json({
-      users: exerciseUsers
-    })
+    res.json(exerciseUsers);
   });
 });
 
