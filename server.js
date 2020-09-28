@@ -40,12 +40,15 @@ app.get("/urlShortenerMicroservice", function (req, res) {
   res.sendFile(__dirname + '/views/urlShortenerMicroservice.html');
 });
 
+app.get("/exercise-tracker", function (req, res) {
+  res.sendFile(__dirname + '/views/exercise-tracker.html');
+});
+
 // your first API endpoint...
 app.get("/api/hello", function (req, res) {
   console.log({greeting: 'hello API'});
   res.json({greeting: 'hello API'});
 });
-
 
 // Timestamp Project
 app.get("/api/timestamp", function(req, res) {
@@ -106,13 +109,6 @@ app.use(bodyParser.json())
 app.post("/api/shorturl/new/", (req, res) => {
   let client_requested_url = req.body.url
 
-  // dns.lookup(client_requested_url, { all:true, verbatim: true }, (err, address, family) => {
-  //   console.log('address: %j family: IPv%s', address, family, err);
-  //   if (err) {
-  //     return res.json({"error": "invalid URL"});
-  //   }
-  // });
-
   let suffix = shortid.generate();
   let newShortURL = suffix
 
@@ -140,6 +136,34 @@ app.get("/api/shorturl/:suffix", (req, res) => {
     res.redirect(urlForRedirect.original_url);
   });
 });
+
+// Exercise tracker
+var ExerciseUser = mongoose.model('ExerciseUser', new mongoose.Schema({
+  _id: String,
+  username: String
+}));
+
+app.post("/api/exercise/new-user/", (req, res) => {
+  console.log("Accessing post request");
+
+  let mongooseGenerateID = mongoose.Types.ObjectId();
+  console.log(mongooseGenerateID, " <= mongooseGenerateID");
+  let exerciseUser = new ExerciseUser({
+    username: req.body.username,
+    _id: mongooseGenerateID
+  });
+  console.log(exerciseUser, " <= exerciseUser");
+
+  exerciseUser.save((err, doc) => {
+    if (err) return console.error(err);
+    console.log("About to Save Exercise User");
+    res.json({
+      "saved": true,
+      "username": exerciseUser.username,
+      "_id": exerciseUser["_id"]
+    });
+  });
+})
 
 
 // listen for requests :)
