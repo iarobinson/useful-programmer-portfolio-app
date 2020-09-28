@@ -140,31 +140,34 @@ app.get("/api/shorturl/:suffix", (req, res) => {
 // Exercise tracker
 var ExerciseUser = mongoose.model('ExerciseUser', new mongoose.Schema({
   _id: String,
-  username: String
+  username: { type: String, unique: true }
 }));
 
 app.post("/api/exercise/new-user/", (req, res) => {
-  console.log("Accessing post request");
-
   let mongooseGenerateID = mongoose.Types.ObjectId();
-  console.log(mongooseGenerateID, " <= mongooseGenerateID");
   let exerciseUser = new ExerciseUser({
     username: req.body.username,
     _id: mongooseGenerateID
   });
-  console.log(exerciseUser, " <= exerciseUser");
 
   exerciseUser.save((err, doc) => {
     if (err) return console.error(err);
-    console.log("About to Save Exercise User");
+
     res.json({
       "saved": true,
       "username": exerciseUser.username,
       "_id": exerciseUser["_id"]
     });
   });
-})
+});
 
+app.get("/api/exercise/users", (req, res) => {
+  ExerciseUser.find({}, (err, exerciseUsers) => {
+    res.json({
+      users: exerciseUsers
+    })
+  });
+});
 
 // listen for requests :)
 var listener = app.listen(port, function () {
